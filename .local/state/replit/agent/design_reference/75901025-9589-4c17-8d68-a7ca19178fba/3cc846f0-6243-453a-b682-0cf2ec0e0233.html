@@ -1,0 +1,1270 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Sustainable Second-Hand Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+    :root {
+        --background: hsl(120 20% 98%);
+        --foreground: hsl(120 5% 15%);
+        --card: hsl(120 25% 97%);
+        --card-foreground: hsl(120 5% 15%);
+        --popover: hsl(120 25% 97%);
+        --popover-foreground: hsl(120 5% 15%);
+        --primary: hsl(142 76% 36%);
+        --primary-foreground: hsl(0 0% 100%);
+        --secondary: hsl(84 81% 44%);
+        --secondary-foreground: hsl(0 0% 100%);
+        --muted: hsl(120 10% 92%);
+        --muted-foreground: hsl(120 4% 45%);
+        --accent: hsl(24 95% 53%);
+        --accent-foreground: hsl(0 0% 100%);
+        --destructive: hsl(0 84% 60%);
+        --destructive-foreground: hsl(0 0% 100%);
+        --border: hsl(120 15% 85%);
+        --input: hsl(120 15% 85%);
+        --ring: hsl(142 76% 36%);
+        --radius: 0.75rem;
+        --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    
+    .gradient-bg {
+        background: linear-gradient(135deg, hsl(120 30% 95%) 0%, hsl(84 25% 92%) 100%);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+    
+    .tab-active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+    }
+    </style>
+</head>
+<body class="bg-background font-sans antialiased">
+    
+    <!-- @COMPONENT: AuthModal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-card rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="authTitle" class="text-2xl font-bold text-foreground">Welcome to EcoFinds</h2>
+                <button onclick="closeAuthModal()" class="text-muted-foreground hover:text-foreground">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4">
+                        <i class="fas fa-leaf text-2xl text-primary-foreground"></i>
+                    </div>
+                    <p class="text-muted-foreground">Sign in to start your sustainable shopping journey</p>
+                </div>
+                
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Email</label>
+                        <input type="email" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Password</label>
+                        <input type="password" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-4 rounded-md transition-colors">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-muted-foreground text-sm">Don't have an account? 
+                        <button onclick="switchToSignup()" class="text-primary hover:underline font-medium">Sign up</button>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <div class="text-center mb-6">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-secondary rounded-full mb-4">
+                        <i class="fas fa-recycle text-2xl text-secondary-foreground"></i>
+                    </div>
+                    <p class="text-muted-foreground">Join our community of conscious consumers</p>
+                </div>
+                
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Username</label>
+                        <input type="text" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="Choose a username">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Email</label>
+                        <input type="email" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Password</label>
+                        <input type="password" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium py-3 px-4 rounded-md transition-colors">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-muted-foreground text-sm">Already have an account? 
+                        <button onclick="switchToLogin()" class="text-primary hover:underline font-medium">Sign in</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AuthModal -->
+
+    <!-- @COMPONENT: Header -->
+    <header class="bg-card border-b border-border sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-leaf text-primary-foreground text-sm"></i>
+                        </div>
+                        <span class="font-bold text-xl text-foreground">EcoFinds</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" onclick="showScreen('browse')" class="text-muted-foreground hover:text-primary transition-colors">Browse</a>
+                    <a href="#" onclick="showScreen('sell')" class="text-muted-foreground hover:text-primary transition-colors">Sell</a>
+                    <a href="#" onclick="showScreen('myListings')" class="text-muted-foreground hover:text-primary transition-colors">My Listings</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button onclick="showScreen('cart')" class="p-2 text-muted-foreground hover:text-primary transition-colors">
+                            <i class="fas fa-shopping-cart text-lg"></i>
+                            <span class="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors">
+                            <div class="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-muted-foreground text-sm"></i>
+                            </div>
+                            <span class="hidden sm:block text-sm text-foreground">John Doe</span>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-popover rounded-md shadow-lg border border-border">
+                            <a href="#" onclick="showScreen('dashboard')" class="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted">Dashboard</a>
+                            <a href="#" onclick="showScreen('purchases')" class="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted">Purchase History</a>
+                            <div class="border-t border-border"></div>
+                            <a href="#" onclick="openAuthModal()" class="block px-4 py-2 text-sm text-popover-foreground hover:bg-muted">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        
+        <!-- @COMPONENT: BrowseScreen -->
+        <div id="browseScreen" class="screen-content">
+            <!-- Hero Section -->
+            <div class="gradient-bg py-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <h1 class="text-4xl font-bold text-foreground mb-4">Discover. Reuse. Sustain.</h1>
+                        <p class="text-xl text-muted-foreground mb-8">Find unique second-hand treasures while making a positive impact on our planet</p>
+                        
+                        <!-- Search Bar -->
+                        <div class="max-w-2xl mx-auto relative mb-6">
+                            <input type="text" placeholder="Search for items..." class="w-full p-4 pl-12 pr-20 rounded-lg border border-input bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground"></i>
+                            <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-md transition-colors">
+                                Search
+                            </button>
+                        </div>
+                        
+                        <!-- Category Filters -->
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button class="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium">All Categories</button>
+                            <button class="px-4 py-2 bg-card hover:bg-muted text-card-foreground rounded-full text-sm font-medium border border-border transition-colors">Electronics</button>
+                            <button class="px-4 py-2 bg-card hover:bg-muted text-card-foreground rounded-full text-sm font-medium border border-border transition-colors">Clothing</button>
+                            <button class="px-4 py-2 bg-card hover:bg-muted text-card-foreground rounded-full text-sm font-medium border border-border transition-colors">Books</button>
+                            <button class="px-4 py-2 bg-card hover:bg-muted text-card-foreground rounded-full text-sm font-medium border border-border transition-colors">Home & Garden</button>
+                            <button class="px-4 py-2 bg-card hover:bg-muted text-card-foreground rounded-full text-sm font-medium border border-border transition-colors">Sports</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Grid -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-foreground">Featured Items</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-muted-foreground text-sm">Sort by:</span>
+                        <select class="p-2 border border-input rounded-md bg-background text-foreground text-sm">
+                            <option>Latest</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- @MAP: products.map(product => ( -->
+                    
+                    <!-- Product Card 1 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('vintage-camera')">
+                        <!-- Vintage camera with film rolls and leather strap -->
+                        <img src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Vintage Camera" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Vintage Film Camera</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Electronics • Like new condition</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$89</span>
+                                <button onclick="addToCart(event, 'vintage-camera')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 2 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('denim-jacket')">
+                        <!-- Denim jacket hanging on a wooden hanger -->
+                        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Denim Jacket" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Classic Denim Jacket</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Clothing • Size M • Good condition</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$35</span>
+                                <button onclick="addToCart(event, 'denim-jacket')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 3 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('plant-collection')">
+                        <!-- Collection of potted plants on a wooden shelf -->
+                        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Plant Collection" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Indoor Plant Collection</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Home & Garden • 5 plants included</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$45</span>
+                                <button onclick="addToCart(event, 'plant-collection')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 4 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('vintage-books')">
+                        <!-- Stack of vintage books on a wooden table -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Vintage Books" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Classic Literature Set</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Books • Collection of 8 books</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$28</span>
+                                <button onclick="addToCart(event, 'vintage-books')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 5 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('guitar-acoustic')">
+                        <!-- Acoustic guitar leaning against a wall -->
+                        <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Acoustic Guitar" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Acoustic Guitar</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Music • Yamaha • Excellent condition</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$180</span>
+                                <button onclick="addToCart(event, 'guitar-acoustic')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 6 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('coffee-maker')">
+                        <!-- Vintage coffee maker with coffee cups -->
+                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Coffee Maker" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Espresso Machine</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Home & Garden • Breville • Works perfectly</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$125</span>
+                                <button onclick="addToCart(event, 'coffee-maker')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 7 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('leather-bag')">
+                        <!-- Vintage leather messenger bag on a wooden surface -->
+                        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Leather Bag" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Leather Messenger Bag</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Accessories • Genuine leather • Vintage</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$65</span>
+                                <button onclick="addToCart(event, 'leather-bag')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Card 8 -->
+                    <div class="product-card bg-card rounded-lg shadow-sm border border-border overflow-hidden cursor-pointer" onclick="showProductDetail('bike-vintage')">
+                        <!-- Vintage bicycle parked against a brick wall -->
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300" alt="Vintage Bike" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-foreground mb-2">Vintage City Bike</h3>
+                            <p class="text-muted-foreground text-sm mb-3">Sports • 21-speed • Restored condition</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-primary">$250</span>
+                                <button onclick="addToCart(event, 'bike-vintage')" class="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- @END_MAP -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground font-medium py-3 px-6 rounded-md transition-colors">
+                        Load More Items
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: BrowseScreen -->
+        
+        <!-- @COMPONENT: SellScreen -->
+        <div id="sellScreen" class="screen-content hidden">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-foreground mb-2">List Your Item</h1>
+                    <p class="text-muted-foreground">Give your pre-loved items a new home and earn some money while helping the planet</p>
+                </div>
+                
+                <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-foreground mb-2">Product Title *</label>
+                                <input type="text" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="e.g. Vintage Leather Jacket, iPhone 12, etc.">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-foreground mb-2">Category *</label>
+                                <select class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Select a category</option>
+                                    <option>Electronics</option>
+                                    <option>Clothing & Fashion</option>
+                                    <option>Books & Media</option>
+                                    <option>Home & Garden</option>
+                                    <option>Sports & Recreation</option>
+                                    <option>Music & Instruments</option>
+                                    <option>Accessories</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-foreground mb-2">Price *</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+                                    <input type="number" class="w-full p-3 pl-8 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="0.00" step="0.01">
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-foreground mb-2">Description *</label>
+                                <textarea rows="4" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="Describe the condition, age, brand, and any other relevant details..."></textarea>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-foreground mb-2">Condition</label>
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                                    <label class="flex items-center space-x-2 p-3 border border-input rounded-md cursor-pointer hover:bg-muted">
+                                        <input type="radio" name="condition" value="new" class="text-primary">
+                                        <span class="text-sm">Like New</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 p-3 border border-input rounded-md cursor-pointer hover:bg-muted">
+                                        <input type="radio" name="condition" value="excellent" class="text-primary">
+                                        <span class="text-sm">Excellent</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 p-3 border border-input rounded-md cursor-pointer hover:bg-muted">
+                                        <input type="radio" name="condition" value="good" class="text-primary">
+                                        <span class="text-sm">Good</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 p-3 border border-input rounded-md cursor-pointer hover:bg-muted">
+                                        <input type="radio" name="condition" value="fair" class="text-primary">
+                                        <span class="text-sm">Fair</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 p-3 border border-input rounded-md cursor-pointer hover:bg-muted">
+                                        <input type="radio" name="condition" value="poor" class="text-primary">
+                                        <span class="text-sm">For Parts</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-foreground mb-2">Photos *</label>
+                                <div class="border-2 border-dashed border-input rounded-lg p-8 text-center hover:bg-muted/50 transition-colors">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-muted-foreground mb-4"></i>
+                                    <p class="text-muted-foreground mb-2">Drag and drop photos here, or <button type="button" class="text-primary hover:underline">browse files</button></p>
+                                    <p class="text-xs text-muted-foreground">Maximum 8 photos, up to 5MB each</p>
+                                </div>
+                                <!-- Photo preview area would go here -->
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border">
+                            <button type="button" class="flex-1 bg-muted hover:bg-muted/80 text-muted-foreground font-medium py-3 px-6 rounded-md transition-colors">
+                                Save as Draft
+                            </button>
+                            <button type="submit" class="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-6 rounded-md transition-colors">
+                                Publish Listing
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: SellScreen -->
+        
+        <!-- @COMPONENT: MyListingsScreen -->
+        <div id="myListingsScreen" class="screen-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-foreground mb-2">My Listings</h1>
+                        <p class="text-muted-foreground">Manage your active and sold listings</p>
+                    </div>
+                    <button onclick="showScreen('sell')" class="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add New Listing
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex space-x-4 border-b border-border">
+                        <button class="tab-active py-3 px-1 border-b-2 font-medium text-sm">Active (4)</button>
+                        <button class="py-3 px-1 border-b-2 border-transparent font-medium text-sm text-muted-foreground hover:text-foreground">Sold (12)</button>
+                        <button class="py-3 px-1 border-b-2 border-transparent font-medium text-sm text-muted-foreground hover:text-foreground">Draft (1)</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Active Listing 1 -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Vintage analog turntable with vinyl records -->
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=150" alt="Vintage Turntable" class="w-32 h-32 object-cover rounded-md">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-lg font-semibold text-foreground">Vintage Turntable Record Player</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-secondary/20 text-secondary px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                                        <span class="text-lg font-bold text-primary">$320</span>
+                                    </div>
+                                </div>
+                                <p class="text-muted-foreground text-sm mb-4">Electronics • Posted 3 days ago • 24 views • 5 likes</p>
+                                <p class="text-foreground mb-4">Fully restored 1970s turntable with new cartridge and belt. Includes original dust cover and manual. Perfect for vinyl enthusiasts!</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-edit mr-1"></i>Edit
+                                    </button>
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-eye mr-1"></i>View
+                                    </button>
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-share mr-1"></i>Share
+                                    </button>
+                                    <button class="bg-destructive/20 hover:bg-destructive/30 text-destructive px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-trash mr-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Listing 2 -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Mid-century modern wooden chair -->
+                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&h=150" alt="Mid-Century Chair" class="w-32 h-32 object-cover rounded-md">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-lg font-semibold text-foreground">Mid-Century Modern Chair</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-secondary/20 text-secondary px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                                        <span class="text-lg font-bold text-primary">$150</span>
+                                    </div>
+                                </div>
+                                <p class="text-muted-foreground text-sm mb-4">Home & Garden • Posted 1 week ago • 18 views • 3 likes</p>
+                                <p class="text-foreground mb-4">Beautiful teak dining chair from the 1960s. Original upholstery in excellent condition. Minor wear on legs consistent with age.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-edit mr-1"></i>Edit
+                                    </button>
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-eye mr-1"></i>View
+                                    </button>
+                                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-share mr-1"></i>Share
+                                    </button>
+                                    <button class="bg-destructive/20 hover:bg-destructive/30 text-destructive px-3 py-1 rounded-md text-sm transition-colors">
+                                        <i class="fas fa-trash mr-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MyListingsScreen -->
+        
+        <!-- @COMPONENT: CartScreen -->
+        <div id="cartScreen" class="screen-content hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-foreground mb-2">Shopping Cart</h1>
+                    <p class="text-muted-foreground">Review your items before checkout</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- Cart Item 1 -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <div class="flex gap-4">
+                                <!-- Vintage camera with film rolls -->
+                                <img src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=120" alt="Vintage Camera" class="w-20 h-20 object-cover rounded-md">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-foreground mb-1">Vintage Film Camera</h3>
+                                    <p class="text-muted-foreground text-sm mb-2">Sold by Sarah Johnson</p>
+                                    <p class="text-primary font-bold text-lg">$89.00</p>
+                                </div>
+                                <div class="flex flex-col items-end space-y-2">
+                                    <button class="text-muted-foreground hover:text-destructive">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">-</button>
+                                        <span class="w-8 text-center">1</span>
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cart Item 2 -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <div class="flex gap-4">
+                                <!-- Collection of potted plants -->
+                                <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=120" alt="Plant Collection" class="w-20 h-20 object-cover rounded-md">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-foreground mb-1">Indoor Plant Collection</h3>
+                                    <p class="text-muted-foreground text-sm mb-2">Sold by Green Thumb Mike</p>
+                                    <p class="text-primary font-bold text-lg">$45.00</p>
+                                </div>
+                                <div class="flex flex-col items-end space-y-2">
+                                    <button class="text-muted-foreground hover:text-destructive">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">-</button>
+                                        <span class="w-8 text-center">1</span>
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cart Item 3 -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <div class="flex gap-4">
+                                <!-- Vintage leather messenger bag -->
+                                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=120" alt="Leather Bag" class="w-20 h-20 object-cover rounded-md">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-foreground mb-1">Leather Messenger Bag</h3>
+                                    <p class="text-muted-foreground text-sm mb-2">Sold by Vintage Finds Co</p>
+                                    <p class="text-primary font-bold text-lg">$65.00</p>
+                                </div>
+                                <div class="flex flex-col items-end space-y-2">
+                                    <button class="text-muted-foreground hover:text-destructive">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">-</button>
+                                        <span class="w-8 text-center">1</span>
+                                        <button class="w-8 h-8 bg-muted hover:bg-muted/80 rounded-md flex items-center justify-center">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6 sticky top-24">
+                            <h3 class="text-lg font-semibold text-foreground mb-4">Order Summary</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Subtotal (3 items)</span>
+                                    <span class="text-foreground">$199.00</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Shipping</span>
+                                    <span class="text-foreground">$12.00</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Service Fee</span>
+                                    <span class="text-foreground">$3.99</span>
+                                </div>
+                                <div class="border-t border-border pt-3">
+                                    <div class="flex justify-between font-semibold">
+                                        <span class="text-foreground">Total</span>
+                                        <span class="text-foreground text-lg">$214.99</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-4 rounded-md mt-6 transition-colors">
+                                Proceed to Checkout
+                            </button>
+                            <p class="text-xs text-muted-foreground mt-3 text-center">By proceeding, you agree to our Terms of Service</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: CartScreen -->
+        
+        <!-- @COMPONENT: DashboardScreen -->
+        <div id="dashboardScreen" class="screen-content hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-foreground mb-2">Profile Dashboard</h1>
+                    <p class="text-muted-foreground">Manage your account and preferences</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Profile Info -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <h3 class="text-lg font-semibold text-foreground mb-4">Personal Information</h3>
+                            <form class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-foreground mb-2">First Name</label>
+                                        <input type="text" value="John" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-foreground mb-2">Last Name</label>
+                                        <input type="text" value="Doe" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Username</label>
+                                    <input type="text" value="johndoe_eco" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Email</label>
+                                    <input type="email" value="john.doe@email.com" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Bio</label>
+                                    <textarea rows="3" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="Tell us about yourself...">Passionate about sustainable living and finding unique second-hand treasures. Love vintage electronics and home decor!</textarea>
+                                </div>
+                                <button type="submit" class="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors">
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Address Information -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <h3 class="text-lg font-semibold text-foreground mb-4">Address Information</h3>
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Street Address</label>
+                                    <input type="text" value="123 Eco Street" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-foreground mb-2">City</label>
+                                        <input type="text" value="San Francisco" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-foreground mb-2">State</label>
+                                        <input type="text" value="CA" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-foreground mb-2">ZIP Code</label>
+                                        <input type="text" value="94105" class="w-full p-3 border border-input rounded-md bg-background focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    </div>
+                                </div>
+                                <button type="submit" class="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors">
+                                    Update Address
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Profile Picture -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6 text-center">
+                            <div class="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user text-2xl text-muted-foreground"></i>
+                            </div>
+                            <h3 class="font-semibold text-foreground mb-2">John Doe</h3>
+                            <p class="text-sm text-muted-foreground mb-4">Member since March 2024</p>
+                            <button class="bg-muted hover:bg-muted/80 text-muted-foreground font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                                Change Photo
+                            </button>
+                        </div>
+                        
+                        <!-- Account Stats -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <h3 class="text-lg font-semibold text-foreground mb-4">Account Stats</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-muted-foreground text-sm">Items Sold</span>
+                                    <span class="font-semibold text-foreground">12</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-muted-foreground text-sm">Items Purchased</span>
+                                    <span class="font-semibold text-foreground">8</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-muted-foreground text-sm">Rating</span>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="flex text-secondary">
+                                            <i class="fas fa-star text-xs"></i>
+                                            <i class="fas fa-star text-xs"></i>
+                                            <i class="fas fa-star text-xs"></i>
+                                            <i class="fas fa-star text-xs"></i>
+                                            <i class="fas fa-star text-xs"></i>
+                                        </div>
+                                        <span class="text-sm font-semibold text-foreground">4.9</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-muted-foreground text-sm">Total Saved</span>
+                                    <span class="font-semibold text-secondary">$420</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                            <h3 class="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+                            <div class="space-y-2">
+                                <button class="w-full text-left p-3 hover:bg-muted rounded-md transition-colors text-sm">
+                                    <i class="fas fa-cog mr-3 text-muted-foreground"></i>Account Settings
+                                </button>
+                                <button class="w-full text-left p-3 hover:bg-muted rounded-md transition-colors text-sm">
+                                    <i class="fas fa-bell mr-3 text-muted-foreground"></i>Notifications
+                                </button>
+                                <button class="w-full text-left p-3 hover:bg-muted rounded-md transition-colors text-sm">
+                                    <i class="fas fa-shield-alt mr-3 text-muted-foreground"></i>Privacy & Security
+                                </button>
+                                <button class="w-full text-left p-3 hover:bg-muted rounded-md transition-colors text-sm">
+                                    <i class="fas fa-question-circle mr-3 text-muted-foreground"></i>Help & Support
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DashboardScreen -->
+        
+        <!-- @COMPONENT: PurchasesScreen -->
+        <div id="purchasesScreen" class="screen-content hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-foreground mb-2">Purchase History</h1>
+                    <p class="text-muted-foreground">Track your sustainable shopping journey</p>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex space-x-4 border-b border-border">
+                        <button class="tab-active py-3 px-1 border-b-2 font-medium text-sm">All Orders (15)</button>
+                        <button class="py-3 px-1 border-b-2 border-transparent font-medium text-sm text-muted-foreground hover:text-foreground">In Progress (2)</button>
+                        <button class="py-3 px-1 border-b-2 border-transparent font-medium text-sm text-muted-foreground hover:text-foreground">Completed (13)</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Recent Order -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-foreground mb-1">Order #ECO-2024-0156</h3>
+                                <p class="text-muted-foreground text-sm">Placed on March 15, 2024 • 3 items</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-medium">Delivered</span>
+                                <p class="text-lg font-bold text-foreground mt-1">$214.99</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <!-- Wooden kitchen utensil set -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Kitchen Utensils" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Bamboo Kitchen Set</p>
+                                    <p class="text-muted-foreground text-xs">$45.00</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Vintage brass desk lamp -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Desk Lamp" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Vintage Desk Lamp</p>
+                                    <p class="text-muted-foreground text-xs">$89.00</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Set of ceramic planters -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Plant Pots" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Ceramic Planters</p>
+                                    <p class="text-muted-foreground text-xs">$68.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4 border-t border-border">
+                            <p class="text-sm text-muted-foreground">
+                                <i class="fas fa-truck mr-2"></i>Delivered to 123 Eco Street, San Francisco
+                            </p>
+                            <div class="flex space-x-2">
+                                <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    View Details
+                                </button>
+                                <button class="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Buy Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Previous Order -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-foreground mb-1">Order #ECO-2024-0142</h3>
+                                <p class="text-muted-foreground text-sm">Placed on March 8, 2024 • 2 items</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-medium">Delivered</span>
+                                <p class="text-lg font-bold text-foreground mt-1">$156.50</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Vintage leather jacket -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Leather Jacket" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Vintage Leather Jacket</p>
+                                    <p class="text-muted-foreground text-xs">$120.00</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Canvas artwork -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Abstract Art" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Abstract Canvas Art</p>
+                                    <p class="text-muted-foreground text-xs">$32.50</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4 border-t border-border">
+                            <p class="text-sm text-muted-foreground">
+                                <i class="fas fa-truck mr-2"></i>Delivered to 123 Eco Street, San Francisco
+                            </p>
+                            <div class="flex space-x-2">
+                                <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    View Details
+                                </button>
+                                <button class="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    Leave Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Older Order -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-foreground mb-1">Order #ECO-2024-0128</h3>
+                                <p class="text-muted-foreground text-sm">Placed on February 28, 2024 • 1 item</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-medium">Delivered</span>
+                                <p class="text-lg font-bold text-foreground mt-1">$185.00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-4 mb-4">
+                            <!-- Vintage acoustic guitar -->
+                            <div class="flex items-center space-x-3">
+                                <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80" alt="Acoustic Guitar" class="w-16 h-16 object-cover rounded-md">
+                                <div>
+                                    <p class="font-medium text-foreground text-sm">Vintage Acoustic Guitar</p>
+                                    <p class="text-muted-foreground text-xs">$185.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4 border-t border-border">
+                            <p class="text-sm text-muted-foreground">
+                                <i class="fas fa-truck mr-2"></i>Delivered to 123 Eco Street, San Francisco
+                            </p>
+                            <div class="flex space-x-2">
+                                <button class="bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    View Details
+                                </button>
+                                <button class="bg-accent hover:bg-accent/90 text-accent-foreground px-3 py-1 rounded-md text-sm transition-colors">
+                                    ★ Reviewed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button class="bg-muted hover:bg-muted/80 text-muted-foreground font-medium py-3 px-6 rounded-md transition-colors">
+                        Load More Orders
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: PurchasesScreen -->
+        
+        <!-- @COMPONENT: ProductDetailModal -->
+        <div id="productDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    <!-- Product Image -->
+                    <div class="p-6">
+                        <div class="relative">
+                            <button onclick="closeProductDetail()" class="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 z-10">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <!-- Vintage camera with film rolls -->
+                            <img id="productDetailImage" src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600" alt="Product" class="w-full h-96 object-cover rounded-lg">
+                        </div>
+                        <!-- Thumbnail gallery would go here -->
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <span class="bg-secondary/20 text-secondary px-2 py-1 rounded-full text-xs font-medium mb-2 inline-block">Electronics</span>
+                            <h2 id="productDetailTitle" class="text-2xl font-bold text-foreground mb-2">Vintage Film Camera</h2>
+                            <p class="text-3xl font-bold text-primary mb-4">$89.00</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-semibold text-foreground mb-2">Description</h3>
+                            <p id="productDetailDescription" class="text-muted-foreground text-sm leading-relaxed">
+                                Beautiful vintage 35mm film camera in excellent working condition. This classic piece has been carefully maintained and comes with the original leather case. Perfect for photography enthusiasts who appreciate the art of film photography. Includes fresh battery and tested light meter.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-semibold text-foreground mb-3">Details</h3>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-muted-foreground">Condition:</span>
+                                    <span class="text-foreground font-medium">Excellent</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted-foreground">Brand:</span>
+                                    <span class="text-foreground font-medium">Canon</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted-foreground">Posted:</span>
+                                    <span class="text-foreground font-medium">3 days ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted-foreground">Views:</span>
+                                    <span class="text-foreground font-medium">47</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="font-semibold text-foreground mb-3">Seller Information</h3>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-muted-foreground"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-foreground">Sarah Johnson</p>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex text-secondary text-sm">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="text-sm text-muted-foreground">(24 reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-4 rounded-md transition-colors">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                            </button>
+                            <button class="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium py-3 px-4 rounded-md transition-colors">
+                                <i class="fas fa-comment mr-2"></i>Message Seller
+                            </button>
+                            <button class="w-full bg-muted hover:bg-muted/80 text-muted-foreground font-medium py-3 px-4 rounded-md transition-colors">
+                                <i class="fas fa-heart mr-2"></i>Save to Favorites
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProductDetailModal -->
+        
+    </main>
+    
+    <!-- @COMPONENT: MobileNavigation -->
+    <nav class="mobile-nav md:hidden bg-card border-t border-border">
+        <div class="flex justify-around py-2">
+            <button onclick="showScreen('browse')" class="flex flex-col items-center py-2 px-3 text-primary">
+                <i class="fas fa-home text-lg mb-1"></i>
+                <span class="text-xs">Browse</span>
+            </button>
+            <button onclick="showScreen('sell')" class="flex flex-col items-center py-2 px-3 text-muted-foreground hover:text-primary transition-colors">
+                <i class="fas fa-plus-circle text-lg mb-1"></i>
+                <span class="text-xs">Sell</span>
+            </button>
+            <button onclick="showScreen('myListings')" class="flex flex-col items-center py-2 px-3 text-muted-foreground hover:text-primary transition-colors">
+                <i class="fas fa-list text-lg mb-1"></i>
+                <span class="text-xs">My Items</span>
+            </button>
+            <button onclick="showScreen('cart')" class="flex flex-col items-center py-2 px-3 text-muted-foreground hover:text-primary transition-colors relative">
+                <i class="fas fa-shopping-cart text-lg mb-1"></i>
+                <span class="text-xs">Cart</span>
+                <span class="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </button>
+            <button onclick="showScreen('dashboard')" class="flex flex-col items-center py-2 px-3 text-muted-foreground hover:text-primary transition-colors">
+                <i class="fas fa-user text-lg mb-1"></i>
+                <span class="text-xs">Profile</span>
+            </button>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: MobileNavigation -->
+
+    <script>
+    // TODO: Implement state management and API calls
+    
+    (function() {
+        // Screen management
+        function showScreen(screenName) {
+            const screens = document.querySelectorAll('.screen-content');
+            screens.forEach(screen => screen.classList.add('hidden'));
+            
+            const targetScreen = document.getElementById(screenName + 'Screen');
+            if (targetScreen) {
+                targetScreen.classList.remove('hidden');
+            }
+            
+            // Update active tab in mobile nav
+            const navButtons = document.querySelectorAll('.mobile-nav button');
+            navButtons.forEach(btn => {
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-muted-foreground');
+            });
+            
+            // Find and activate corresponding nav button
+            const activeButton = document.querySelector(`.mobile-nav button[onclick*="${screenName}"]`);
+            if (activeButton) {
+                activeButton.classList.remove('text-muted-foreground');
+                activeButton.classList.add('text-primary');
+            }
+        }
+        
+        // Auth modal management
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+        
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+        
+        function switchToSignup() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Join EcoFinds';
+        }
+        
+        function switchToLogin() {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Welcome to EcoFinds';
+        }
+        
+        // User menu management
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Product detail modal
+        function showProductDetail(productId) {
+            document.getElementById('productDetailModal').classList.remove('hidden');
+            // TODO: Load product data based on productId
+        }
+        
+        function closeProductDetail() {
+            document.getElementById('productDetailModal').classList.add('hidden');
+        }
+        
+        // Add to cart functionality
+        function addToCart(event, productId) {
+            event.stopPropagation();
+            // TODO: Implement add to cart logic
+            console.log('Added product to cart:', productId);
+            
+            // Visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.classList.add('bg-secondary/80');
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('bg-secondary/80');
+            }, 1000);
+        }
+        
+        // Make functions globally available
+        window.showScreen = showScreen;
+        window.openAuthModal = openAuthModal;
+        window.closeAuthModal = closeAuthModal;
+        window.switchToSignup = switchToSignup;
+        window.switchToLogin = switchToLogin;
+        window.toggleUserMenu = toggleUserMenu;
+        window.showProductDetail = showProductDetail;
+        window.closeProductDetail = closeProductDetail;
+        window.addToCart = addToCart;
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#userMenu') && !event.target.closest('button[onclick="toggleUserMenu()"]')) {
+                document.getElementById('userMenu').classList.add('hidden');
+            }
+        });
+        
+        // Initialize with browse screen visible
+        showScreen('browse');
+    })();
+    </script>
+
+</body>
+</html>

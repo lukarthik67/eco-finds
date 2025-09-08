@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(120, 20%, 98%);
+  --foreground: hsl(120, 5%, 15%);
+  --card: hsl(120, 25%, 97%);
+  --card-foreground: hsl(120, 5%, 15%);
+  --popover: hsl(120, 25%, 97%);
+  --popover-foreground: hsl(120, 5%, 15%);
+  --primary: hsl(142, 76%, 36%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(84, 81%, 44%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(120, 10%, 92%);
+  --muted-foreground: hsl(120, 4%, 45%);
+  --accent: hsl(24, 95%, 53%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(120, 15%, 85%);
+  --input: hsl(120, 15%, 85%);
+  --ring: hsl(142, 76%, 36%);
+  --radius: 0.75rem;
+  
+  /* Chart colors */
+  --chart-1: hsl(142, 76%, 36%);
+  --chart-2: hsl(84, 81%, 44%);
+  --chart-3: hsl(24, 95%, 53%);
+  --chart-4: hsl(120, 50%, 35%);
+  --chart-5: hsl(45, 85%, 55%);
+  
+  /* Sidebar colors */
+  --sidebar: hsl(120, 25%, 97%);
+  --sidebar-foreground: hsl(120, 5%, 15%);
+  --sidebar-primary: hsl(142, 76%, 36%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(120, 10%, 92%);
+  --sidebar-accent-foreground: hsl(142, 76%, 36%);
+  --sidebar-border: hsl(120, 15%, 85%);
+  --sidebar-ring: hsl(142, 76%, 36%);
+  
+  /* Font families */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  
+  /* Eco-specific colors */
+  --eco-background: hsl(120, 20%, 98%);
+  --eco-foreground: hsl(120, 5%, 15%);
+  --eco-card: hsl(120, 25%, 97%);
+  --eco-card-foreground: hsl(120, 5%, 15%);
+  --eco-popover: hsl(120, 25%, 97%);
+  --eco-popover-foreground: hsl(120, 5%, 15%);
+  --eco-primary: hsl(142, 76%, 36%);
+  --eco-primary-foreground: hsl(0, 0%, 100%);
+  --eco-secondary: hsl(84, 81%, 44%);
+  --eco-secondary-foreground: hsl(0, 0%, 100%);
+  --eco-muted: hsl(120, 10%, 92%);
+  --eco-muted-foreground: hsl(120, 4%, 45%);
+  --eco-accent: hsl(24, 95%, 53%);
+  --eco-accent-foreground: hsl(0, 0%, 100%);
+  --eco-destructive: hsl(0, 84%, 60%);
+  --eco-destructive-foreground: hsl(0, 0%, 100%);
+  --eco-border: hsl(120, 15%, 85%);
+  --eco-input: hsl(120, 15%, 85%);
+  --eco-ring: hsl(142, 76%, 36%);
+  
+  /* Shadow and spacing */
+  --shadow-2xs: 0px 1px 2px 0px hsl(0, 0%, 0%, 0.05);
+  --shadow-xs: 0px 1px 3px 0px hsl(0, 0%, 0%, 0.1);
+  --shadow-sm: 0px 1px 3px 0px hsl(0, 0%, 0%, 0.1), 0px 1px 2px -1px hsl(0, 0%, 0%, 0.1);
+  --shadow: 0px 1px 3px 0px hsl(0, 0%, 0%, 0.1), 0px 1px 2px -1px hsl(0, 0%, 0%, 0.1);
+  --shadow-md: 0px 4px 6px -1px hsl(0, 0%, 0%, 0.1), 0px 2px 4px -2px hsl(0, 0%, 0%, 0.1);
+  --shadow-lg: 0px 10px 15px -3px hsl(0, 0%, 0%, 0.1), 0px 4px 6px -4px hsl(0, 0%, 0%, 0.1);
+  --shadow-xl: 0px 20px 25px -5px hsl(0, 0%, 0%, 0.1), 0px 8px 10px -6px hsl(0, 0%, 0%, 0.1);
+  --shadow-2xl: 0px 25px 50px -12px hsl(0, 0%, 0%, 0.25);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(120, 10%, 5%);
+  --foreground: hsl(120, 10%, 90%);
+  --card: hsl(120, 10%, 8%);
+  --card-foreground: hsl(120, 10%, 90%);
+  --popover: hsl(120, 10%, 8%);
+  --popover-foreground: hsl(120, 10%, 90%);
+  --primary: hsl(142, 70%, 45%);
+  --primary-foreground: hsl(120, 10%, 5%);
+  --secondary: hsl(84, 70%, 50%);
+  --secondary-foreground: hsl(120, 10%, 5%);
+  --muted: hsl(120, 10%, 15%);
+  --muted-foreground: hsl(120, 5%, 60%);
+  --accent: hsl(24, 85%, 60%);
+  --accent-foreground: hsl(120, 10%, 5%);
+  --destructive: hsl(0, 75%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(120, 10%, 20%);
+  --input: hsl(120, 10%, 20%);
+  --ring: hsl(142, 70%, 45%);
+  
+  /* Eco-specific dark mode colors */
+  --eco-background: hsl(120, 10%, 5%);
+  --eco-foreground: hsl(120, 10%, 90%);
+  --eco-card: hsl(120, 10%, 8%);
+  --eco-card-foreground: hsl(120, 10%, 90%);
+  --eco-popover: hsl(120, 10%, 8%);
+  --eco-popover-foreground: hsl(120, 10%, 90%);
+  --eco-primary: hsl(142, 70%, 45%);
+  --eco-primary-foreground: hsl(120, 10%, 5%);
+  --eco-secondary: hsl(84, 70%, 50%);
+  --eco-secondary-foreground: hsl(120, 10%, 5%);
+  --eco-muted: hsl(120, 10%, 15%);
+  --eco-muted-foreground: hsl(120, 5%, 60%);
+  --eco-accent: hsl(24, 85%, 60%);
+  --eco-accent-foreground: hsl(120, 10%, 5%);
+  --eco-destructive: hsl(0, 75%, 60%);
+  --eco-destructive-foreground: hsl(0, 0%, 100%);
+  --eco-border: hsl(120, 10%, 20%);
+  --eco-input: hsl(120, 10%, 20%);
+  --eco-ring: hsl(142, 70%, 45%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* Gradient background utility */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--eco-background) 0%, var(--eco-card) 100%);
+}
+
+/* Product card hover effects */
+.product-card:hover {
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Tab active state */
+.tab-active {
+  color: var(--eco-primary);
+  border-bottom-color: var(--eco-primary);
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--eco-ring);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--eco-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--eco-muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--eco-primary);
+}

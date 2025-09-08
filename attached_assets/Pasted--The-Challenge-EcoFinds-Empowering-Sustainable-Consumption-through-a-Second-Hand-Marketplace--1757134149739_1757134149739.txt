@@ -1,0 +1,72 @@
+ The Challenge: "EcoFinds – Empowering Sustainable Consumption through a 
+Second-Hand Marketplace" 
+Overall Vision: The overarching vision for EcoFinds is to create a vibrant and trusted 
+platform that revolutionizes the way people buy and sell pre-owned goods. It aims to 
+foster a culture of sustainability by extending the lifecycle of products, reducing waste, 
+and providing an accessible and convenient alternative to purchasing new items. 
+EcoFinds envisions becoming the go-to destination for a conscious community seeking 
+unique finds and responsible consumption. 
+Mission: The mission for the hackathon team is to develop a user-friendly and 
+engaging desktop and mobile application that serves as a central hub for buying and 
+selling second-hand items. EcoFinds should leverage intuitive design and essential 
+features to connect buyers and sellers efficiently, promoting a circular economy and 
+making sustainable choices easier for everyone. This involves building a platform that is 
+both functional and inspires trust and community. 
+Problem Statement  
+Develop a foundational version of EcoFinds, focusing on core user authentication and 
+product listing functionalities. Teams must deliver a functional prototype, accessible via 
+both mobile and desktop interfaces, that allows users to register and log in, create and 
+manage basic product listings (including title, description, category, price, and at least 
+one image placeholder), and browse these listings with basic filtering and search 
+capabilities. The system must employ efficient data structures for managing user and 
+product data, ensuring a stable and responsive user experience. 
+User Authentication: A simple and secure mechanism for user registration and 
+login (e.g., email and password). 
+Profile Creation (Basic): Ability for users to set a username. 
+User Dashboard: Should be able to edit all the fields. 
+Product Listing Creation: Functionality for users to create new product listings, 
+including attributes such as a title, a brief description, selection of a predefined 
+category, a price, and a placeholder for at least one image. 
+Product Listing Management (CRUD - Basic): Ability for users to view, edit, 
+and delete their own product listings. 
+Product Browsing: A view displaying a list of available product listings with 
+basic information (title, price, and placeholder image). 
+Category Filtering: Ability to filter product listings by predefined categories. 
+Keyword Search: Basic search functionality allowing users to search listings 
+based on keywords in the title. 
+Product Detail View: A screen/page displaying the full details of a selected 
+product, including title, description, price, category, and the image placeholder. 
+Previous purchase View: A screen/page displaying the products that were 
+purchased before. 
+Cart: A screen displaying all the products that are added to the cart. 
+Wireframes: 
+Login/Sign Up Screen: 
+○ Elements: App logo, email input, password input, login button, sign-up 
+link/button. 
+Product Listing Feed Screen: 
+○ Elements: Header with app title/logo, search bar, category filter options 
+(e.g., as tappable buttons or a dropdown), list of product items (each 
+showing a placeholder image, title, and price), a "+" button to add a new 
+product listing (prominent). 
+Add New Product Screen: 
+○ Elements: Back button, screen title ("Add New Product"), input fields for 
+"Product Title," "Category" (dropdown), "Description" (text area), "Price" 
+(number input), a button labeled "+ Add Image (Placeholder)," and a 
+"Submit Listing" button. 
+My Listings Screen: 
+○ Elements: Header with app title/logo, a "+" button to add a new product, a 
+list of the user's listed products (each showing a placeholder image, title, 
+price, and "Edit" and "Delete" buttons). 
+Product Detail Screen: 
+○ Elements: Back button, product image placeholder (larger), product title, 
+price, category, description. 
+User Dashboard:  
+○ Elements: Header with app title/logo, image of the user, display all the 
+fields related to the user and also provide the user the ability to edit them.  
+Cart:  
+○ Element: Header with app title/logo, the page should include all the 
+products that are added in the cart. The product should be displayed in the 
+form of cards containing basic information about the product. 
+Previous Purchase:  
+○ Element: This page should contain the list view of the products that were 
+purchased in the past by the current user. 
