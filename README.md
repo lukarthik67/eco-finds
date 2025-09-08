@@ -1,4 +1,4 @@
-# EcoFinds – Second-Hand Marketplace
+# EcoFinds – Second-Hand Marketplace(HACKTHON)
 
 EcoFinds is a sustainable marketplace app that lets users buy and sell second-hand items.  
 It promotes recycling, circular economy, and conscious consumption.  
