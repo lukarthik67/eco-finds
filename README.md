@@ -23,4 +23,7 @@ The app has a **React frontend**, **Express backend**, and **PostgreSQL database
 - **Auth**: Replit OIDC with sessions  
 
 ---
- 
+```python
+contributers :
+Karthik and his team
+``` 
