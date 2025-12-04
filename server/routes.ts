@@ -1,20 +1,25 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertProductSchema, insertCartItemSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
+import { insertProductSchema, insertCartItemSchema, insertOrderSchema } from "@shared/schema";
+
+// Dummy authentication middleware placeholder
+// Replace this later with JWT / Auth0 / your own login system
+function isAuthenticated(req: any, res: any, next: any) {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  next();
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
-
   // Initialize categories
   await initializeCategories();
 
-  // Auth routes
+  // User routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -23,10 +28,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update user profile
   app.patch('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const updatedUser = await storage.updateUser(userId, req.body);
       res.json(updatedUser);
     } catch (error) {
@@ -41,7 +45,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const categories = await storage.getCategories();
       res.json(categories);
     } catch (error) {
-      console.error("Error fetching categories:", error);
       res.status(500).json({ message: "Failed to fetch categories" });
     }
   });
@@ -50,13 +53,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/products', async (req, res) => {
     try {
       const { category, search } = req.query;
-      const products = await storage.getProducts(
-        category as string,
-        search as string
-      );
+      const products = await storage.getProducts(category as string, search as string);
       res.json(products);
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } catch {
       res.status(500).json({ message: "Failed to fetch products" });
     }
   });
@@ -64,76 +63,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/products/:id', async (req, res) => {
     try {
       const product = await storage.getProduct(req.params.id);
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
-      }
-      
-      // Increment view count
-      await storage.incrementProductViews(req.params.id);
-      
-      res.json(product);
-    } catch (error) {
-      console.error("Error fetching product:", error);
-      res.status(500).json({ message: "Failed to fetch product" });
-    }
-  });
+      if (!product) return res.status(404).json({ message: "Product not found" });
 
-  app.get('/api/products/user/:userId', isAuthenticated, async (req, res) => {
-    try {
-      const products = await storage.getProductsByUserId(req.params.userId);
-      res.json(products);
-    } catch (error) {
-      console.error("Error fetching user products:", error);
-      res.status(500).json({ message: "Failed to fetch user products" });
+      await storage.incrementProductViews(req.params.id);
+      res.json(product);
+    } catch {
+      res.status(500).json({ message: "Failed to fetch product" });
     }
   });
 
   app.post('/api/products', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const productData = insertProductSchema.parse({
         ...req.body,
-        sellerId: userId,
+        sellerId: req.user.id,
       });
-      
       const product = await storage.createProduct(productData);
       res.status(201).json(product);
-    } catch (error) {
-      console.error("Error creating product:", error);
+    } catch {
       res.status(500).json({ message: "Failed to create product" });
     }
   });
 
   app.patch('/api/products/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const product = await storage.getProduct(req.params.id);
-      
-      if (!product || product.sellerId !== userId) {
+      if (!product || product.sellerId !== req.user.id)
         return res.status(403).json({ message: "Unauthorized" });
-      }
-      
-      const updatedProduct = await storage.updateProduct(req.params.id, req.body);
-      res.json(updatedProduct);
-    } catch (error) {
-      console.error("Error updating product:", error);
+
+      const updated = await storage.updateProduct(req.params.id, req.body);
+      res.json(updated);
+    } catch {
       res.status(500).json({ message: "Failed to update product" });
     }
   });
 
   app.delete('/api/products/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const product = await storage.getProduct(req.params.id);
-      
-      if (!product || product.sellerId !== userId) {
+      if (!product || product.sellerId !== req.user.id)
         return res.status(403).json({ message: "Unauthorized" });
-      }
-      
+
       await storage.deleteProduct(req.params.id);
       res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting product:", error);
+    } catch {
       res.status(500).json({ message: "Failed to delete product" });
     }
   });
@@ -141,123 +114,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cart routes
   app.get('/api/cart', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const cartItems = await storage.getCartItems(userId);
+      const cartItems = await storage.getCartItems(req.user.id);
       res.json(cartItems);
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
+    } catch {
       res.status(500).json({ message: "Failed to fetch cart items" });
     }
   });
 
   app.post('/api/cart', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
       const cartItemData = insertCartItemSchema.parse({
         ...req.body,
-        userId,
+        userId: req.user.id,
       });
-      
       const cartItem = await storage.addToCart(cartItemData);
       res.status(201).json(cartItem);
-    } catch (error) {
-      console.error("Error adding to cart:", error);
+    } catch {
       res.status(500).json({ message: "Failed to add to cart" });
-    }
-  });
-
-  app.patch('/api/cart/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const { quantity } = req.body;
-      const cartItem = await storage.updateCartItem(req.params.id, quantity);
-      res.json(cartItem);
-    } catch (error) {
-      console.error("Error updating cart item:", error);
-      res.status(500).json({ message: "Failed to update cart item" });
-    }
-  });
-
-  app.delete('/api/cart/:id', isAuthenticated, async (req, res) => {
-    try {
-      await storage.removeFromCart(req.params.id);
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error removing from cart:", error);
-      res.status(500).json({ message: "Failed to remove from cart" });
     }
   });
 
   // Order routes
   app.post('/api/orders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const { items, shippingAddress } = req.body;
-      
-      // Calculate total
-      let total = 0;
-      const orderItems = [];
-      
-      for (const item of items) {
-        const product = await storage.getProduct(item.productId);
-        if (!product) {
-          return res.status(400).json({ message: `Product ${item.productId} not found` });
-        }
-        
-        const itemTotal = parseFloat(product.price) * item.quantity;
-        total += itemTotal;
-        
-        orderItems.push({
-          productId: item.productId,
-          sellerId: product.sellerId,
-          quantity: item.quantity,
-          price: product.price,
-        });
-      }
-      
-      // Add shipping and service fees
-      total += 12.00; // shipping
-      total += 3.99; // service fee
-      
-      const orderData = insertOrderSchema.parse({
-        buyerId: userId,
-        total: total.toFixed(2),
-        shippingAddress,
-        status: 'completed',
-      });
-      
-      const order = await storage.createOrder(orderData, orderItems);
-      
-      // Clear cart
-      await storage.clearCart(userId);
-      
+      const order = await storage.createOrder(req.user.id, req.body);
+      await storage.clearCart(req.user.id);
       res.status(201).json(order);
-    } catch (error) {
-      console.error("Error creating order:", error);
+    } catch {
       res.status(500).json({ message: "Failed to create order" });
-    }
-  });
-
-  app.get('/api/orders', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const orders = await storage.getOrdersByUserId(userId);
-      res.json(orders);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      res.status(500).json({ message: "Failed to fetch orders" });
-    }
-  });
-
-  app.get('/api/orders/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const order = await storage.getOrderById(req.params.id);
-      if (!order) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-      res.json(order);
-    } catch (error) {
-      console.error("Error fetching order:", error);
-      res.status(500).json({ message: "Failed to fetch order" });
     }
   });
 
@@ -279,10 +163,7 @@ async function initializeCategories() {
         { name: "Accessories", slug: "accessories", description: "Bags, jewelry, watches" },
         { name: "Other", slug: "other", description: "Everything else" },
       ];
-
-      for (const category of defaultCategories) {
-        await storage.createCategory(category);
-      }
+      for (const category of defaultCategories) await storage.createCategory(category);
     }
   } catch (error) {
     console.error("Error initializing categories:", error);
